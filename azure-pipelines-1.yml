@@ -4,15 +4,6 @@ trigger:
 
 variables:
 
-  # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'e9feb501-3afe-4ab0-815c-4ed52d1f819b'
-
-  # Web app name
-  webAppName: 'pwc-test1-app'
-
-  # Environment name
-  environmentName: 'pwc-test1-app'
-
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
   
@@ -37,6 +28,28 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'package'
+
+    - task: SonarQubePrepare@4
+      displayName: 'Prepare analysis on SonarQube'
+      inputs:
+        SonarQube: 'sonarqube-con'
+        scannerMode: 'Other'
+
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'latest'
+
+    - task: SonarQubePublish@4
+      displayName: 'Publish Quality Gate Result'
+      inputs:
+        pollingTimeoutSec: '300'
 
     - task: CopyFiles@2
       displayName: 'Copy Files to artifact staging directory'
