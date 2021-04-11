@@ -17,17 +17,6 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
-    - task: Maven@3
-      displayName: 'Maven Package'
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.8'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        goals: 'package'
 
     - task: SonarQubePrepare@4
       displayName: 'Prepare analysis on SonarQube'
@@ -36,9 +25,11 @@ stages:
         scannerMode: 'Other'
 
     - task: Maven@3
+      displayName: 'Package & Run SonarQube Analysis'
       inputs:
         mavenPomFile: 'pom.xml'
-        publishJUnitResults: false
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
@@ -47,7 +38,7 @@ stages:
         sqMavenPluginVersionChoice: 'latest'
 
     - task: SonarQubePublish@4
-      displayName: 'Publish Quality Gate Result'
+      displayName: 'Publish SonarQube Analysis (Quality Gate) Result'
       inputs:
         pollingTimeoutSec: '300'
 
