@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.selenium;
+package org.springframework.samples.petclinic.web;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FirstTest {
+public class SeleniumFirstTest {
 
     private WebDriver driver;
     private Map<String, Object> vars;
